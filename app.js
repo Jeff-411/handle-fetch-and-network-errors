@@ -2,39 +2,38 @@
 const getApi = (url) => {
   fetch(url)
 
-    // HANDLE FETCH() PROMISE: reject() | resolve()
-    .then(res => {
-      // if there's an error (either a network err || a fetch() err)
-      // => return the _entire_ response, 
-      // so the type of err can be sorted out & handled by .catch()
-      if (!res.ok) return Promise.reject(res)
-
-      // otherwise (if the Promise resolves)
-      return res.json()
-    })
-
-    // if fetch()=> resolve(res.json())
-    .then(data => handle_apiData(url, data))
-
-    // if fetch()=> reject(res)
-    // [NOTE: we're now getting the _entire_ response here]
-    .catch(err => {
-      // handle DNS and 'offline' network errors
-      if (err.message === 'Failed to fetch') {
-        // is the network err an 'offline' err?
-        !navigator.onLine?
-        // yes 
-        handle_offlineErr(err): 
-        // no
-        handle_dnsErr(err)
-      }
-
-      // otherwise - if no network errors => handle the fetch() error
-      // [by passing on the _entire_ response .catch(err) received
-      //  when (!res.ok) returned 'Promise.reject(res)]
-      else handle_fetchErrs(err)
-    });
-}
+    // HANDLE FETCH() PROMISE: reject() | resolve()
+    .then(res => {
+      // if there's an error (either a network err || a fetch() err)
+      // => return the _entire_ response, 
+      // so the type of err can be sorted out & handled by .catch()
+      if (!res.ok) return Promise.reject(res)
+  
+      // otherwise (if the Promise resolves)
+      return res.json()
+    })
+  
+    // HANDLE FETCH() RESOLVES()
+    .then(data => handle_apiData(url, data))
+  
+    // HANDLE FETCH() REJECTS(res) [& we're now getting the _entire_ response here]
+    .catch(err => {
+      // handle DNS and 'offline' network errors
+      if (err.message === 'Failed to fetch') {
+        // is the network err an 'offline' err?
+        !navigator.onLine?
+        // yes 
+        handle_offlineErr(err): 
+        // no
+        handle_dnsErr(err)
+      }
+  
+      // otherwise - if no network errors => handle the fetch() error
+      // [by passing on the _entire_ response .catch(err) received
+      //  when (!res.ok) returned 'Promise.reject(res)]
+      else handle_fetchErrs(err)
+    });
+}  
 
 const handle_apiData = (url, data) => {
   // log data to console
